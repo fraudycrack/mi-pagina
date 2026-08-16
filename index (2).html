@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finanzas · Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f4f7fc; }
+        .card { border: none; border-radius: 1.25rem; box-shadow: 0 8px 24px rgba(0,20,50,0.04); transition: all 0.15s ease; }
+        .card:hover { box-shadow: 0 12px 32px rgba(0,20,50,0.08); }
+        .bg-soft-primary { background-color: #eef4ff; }
+        .table thead th { background: #f8fafd; color: #1e293b; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1px solid #e9edf4; }
+        .table td { vertical-align: middle; }
+        .badge-soft-success { background: #e6f7ed; color: #0b5e3a; }
+        .badge-soft-danger { background: #fce9ec; color: #a11f2e; }
+        .badge-soft-warning { background: #fff3d6; color: #8a6100; }
+        .badge-soft-info { background: #dbeafe; color: #1e4b7a; }
+        .badge-soft-secondary { background: #f1f3f5; color: #4b5563; }
+        .badge-admin { background: #fef3c7; color: #92400e; }
+        .btn-outline-custom { border-radius: 40px; border: 1px solid #dfe8f2; color: #1f3a6b; padding: 0.35rem 1.2rem; font-weight: 500; }
+        .btn-outline-custom:hover { background: #f0f5ff; border-color: #bcc9de; }
+        
+        #loginContainer {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #eef4ff 0%, #dae5f5 100%);
+        }
+        #loginContainer.hidden { display: none !important; }
+        .login-card { max-width: 420px; width: 100%; padding: 2rem; }
+        .input-group-clean { background: white; border-radius: 14px; border: 1px solid #dfe8f2; transition: 0.15s; }
+        .input-group-clean:focus-within { border-color: #1f3a6b; box-shadow: 0 0 0 4px rgba(31,58,107,0.08); }
+        .input-group-clean input { border: none; background: transparent; padding: 0.75rem 1rem; font-size: 0.95rem; }
+        .input-group-clean input:focus { box-shadow: none; outline: none; }
+        .input-group-clean .input-group-text { background: transparent; border: none; color: #6b7f9a; padding-left: 1rem; }
+        .btn-primary-custom { background: #1f3a6b; border: none; border-radius: 14px; padding: 0.75rem; font-weight: 600; letter-spacing: 0.01em; }
+        .btn-primary-custom:hover { background: #152b4f; }
+        
+        #dashboardContainer {
+            display: none;
+            padding: 2rem 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #dashboardContainer.visible { display: block; }
+        
+        .table-responsive { border-radius: 1rem; overflow: hidden; }
+        .small-note { color: #64748b; font-size: 0.8rem; }
+        .onat-badge { background: #f0f4fe; border-radius: 40px; padding: 0.25rem 1rem; font-size: 0.75rem; font-weight: 600; color: #1f3a6b; }
+        .utilidad-positive { color: #0b5e3a; font-weight: 600; }
+        .utilidad-negative { color: #a11f2e; font-weight: 600; }
+        .cuenta-badge { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 40px; }
+
+        .nav-tabs-custom {
+            border-bottom: 2px solid #e9edf4;
+            margin-bottom: 1.5rem;
+            gap: 0.25rem;
+        }
+        .nav-tabs-custom .nav-link {
+            border: none;
+            border-radius: 0.75rem 0.75rem 0 0;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.2s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        .nav-tabs-custom .nav-link:hover {
+            color: #1f3a6b;
+            background: rgba(31,58,107,0.04);
+        }
+        .nav-tabs-custom .nav-link.active {
+            color: #1f3a6b;
+            background: white;
+            box-shadow: 0 -4px 12px rgba(31,58,107,0.06);
+        }
+        .nav-tabs-custom .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #1f3a6b;
+            border-radius: 4px 4px 0 0;
+        }
+        .nav-tabs-custom .nav-link.chequera.active { color: #1f3a6b; }
+        .nav-tabs-custom .nav-link.chequera.active::after { background: #1f3a6b; }
+        .nav-tabs-custom .nav-link.tarjeta_cup.active { color: #0b5e3a; }
+        .nav-tabs-custom .nav-link.tarjeta_cup.active::after { background: #0b5e3a; }
+        .nav-tabs-custom .nav-link.tarjeta_usd.active { color: #0e7490; }
+        .nav-tabs-custom .nav-link.tarjeta_usd.active::after { background: #0e7490; }
+        .nav-tabs-custom .nav-link.resumen.active { color: #7c3aed; }
+        .nav-tabs-custom .nav-link.resumen.active::after { background: #7c3aed; }
+        .nav-tabs-custom .nav-link.cierre.active { color: #dc2626; }
+        .nav-tabs-custom .nav-link.cierre.active::after { background: #dc2626; }
+        .nav-tabs-custom .nav-link.admin.active { color: #1f3a6b; }
+        .nav-tabs-custom .nav-link.admin.active::after { background: #1f3a6b; }
+
+        .tab-pane { animation: fadeIn 0.25s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .usuario-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eef2f6;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .usuario-item:last-child { border-bottom: none; }
+        .usuario-item .usuario-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .usuario-item .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+        }
+
+        .mes-bloqueado-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid #eef2f6;
+        }
+        .mes-bloqueado-item:last-child { border-bottom: none; }
+
+        .modal-content { border: none; border-radius: 1.25rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+        .modal-header { border-bottom: 1px solid #e9edf4; padding: 1.25rem 1.5rem; }
+        .modal-header .modal-title { font-weight: 700; color: #0b1e3a; }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer { border-top: 1px solid #e9edf4; padding: 1rem 1.5rem; }
+
+        .mes-contable-bar {
+            background: white;
+            border-radius: 1rem;
+            padding: 0.5rem 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #e9edf4;
+        }
+        .mes-contable-bar .mes-titulo {
+            font-weight: 600;
+            color: #0b1e3a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .mes-contable-bar .mes-titulo select {
+            border-radius: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            border: 1px solid #d0ddea;
+            background: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .mes-contable-bar .mes-titulo input {
+            width: 75px;
+            border-radius: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            border: 1px solid #d0ddea;
+            background: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .mes-contable-bar .mes-estado {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .mes-contable-bar .mes-estado .badge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.8rem;
+        }
+        .mes-contable-bar .mes-acciones {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .modo-edicion-mes {
+            background: #fef3c7;
+            border-radius: 0.75rem;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #f59e0b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        #divSocios {
+            transition: opacity 0.3s ease;
+        }
+        #divSocios.hidden {
+            display: none;
+        }
+
+        .alerta-financiera {
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+        .alerta-financiera.correcto { background: #f0fdf4; border-left-color: #22c55e; }
+        .alerta-financiera.gastar { background: #eff6ff; border-left-color: #3b82f6; }
+        .alerta-financiera.ingresar { background: #fef2f2; border-left-color: #ef4444; }
+        .alerta-financiera.aviso { background: #fffbeb; border-left-color: #f59e0b; }
+        .alerta-financiera .icono { font-size: 2rem; flex-shrink: 0; }
+        .alerta-financiera .contenido { flex: 1; }
+        .alerta-financiera .contenido .titulo { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.15rem; }
+        .alerta-financiera .contenido .sugerencia {
+            font-size: 0.85rem;
+            color: #1f3a6b;
+            margin-top: 0.25rem;
+            background: rgba(255,255,255,0.6);
+            padding: 0.25rem 0.75rem;
+            border-radius: 40px;
+            display: inline-block;
+            font-weight: 500;
+            white-space: pre-line;
+        }
+        .alerta-financiera .porcentaje {
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            padding: 0.25rem 1rem;
+            border-radius: 40px;
+            background: rgba(255,255,255,0.5);
+        }
+        .alerta-financiera .porcentaje.correcto { color: #22c55e; }
+        .alerta-financiera .porcentaje.gastar { color: #3b82f6; }
+        .alerta-financiera .porcentaje.ingresar { color: #dc2626; }
+        .alerta-financiera .porcentaje.aviso { color: #d97706; }
+        .alerta-financiera .resumen-cifras {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+        .alerta-financiera .resumen-cifras span {
+            background: rgba(255,255,255,0.5);
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+        }
+
+        .resumen-tarjeta {
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            height: 100%;
+            transition: all 0.2s ease;
+        }
+        .resumen-tarjeta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+        .resumen-tarjeta.chequera { background: #eef4ff; border: 1px solid #d0ddea; }
+        .resumen-tarjeta.tarjeta_cup { background: #ecfdf5; border: 1px solid #b8e6d0; }
+        .resumen-tarjeta.tarjeta_usd { background: #ecf8ff; border: 1px solid #b8dde6; }
+
+        .fila-clickeable {
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .fila-clickeable:hover {
+            background: #f0f4fe !important;
+        }
+
+        .onat-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #eef2f6; }
+        .onat-item:last-child { border-bottom: none; }
+        .onat-item .value.positive { color: #0b5e3a; font-weight: 600; }
+        .onat-total { background: #f0f4fe; border-radius: 1rem; padding: 1rem; margin-top: 1rem; }
+        .onat-total h4 { color: #1f3a6b; font-weight: 700; }
+
+        .clasificacion-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+        .clasificacion-badge.operacional { background: #dbeafe; color: #1e4b7a; }
+        .clasificacion-badge.transferencia { background: #fef3c7; color: #92400e; }
+        .clasificacion-badge.extraccion { background: #fce4ec; color: #a11f2e; }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginContainer">
+    <div class="login-card card p-4 p-md-5">
+        <div class="text-center mb-4">
+            <i class="bi bi-shop fs-1" style="color: #1f3a6b;"></i>
+            <h4 class="mt-2 fw-bold" style="color: #0b1e3a;">Mi Negocio</h4>
+            <p class="text-secondary small">Acceso para locales registrados</p>
+        </div>
+        <form id="loginForm">
+            <div class="mb-3 input-group-clean d-flex align-items-center">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input type="text" class="form-control" id="userInput" placeholder="Usuario" value="admin" required>
+            </div>
+            <div class="mb-4 input-group-clean d-flex align-items-center">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input type="password" class="form-control" id="passInput" placeholder="Contraseña" value="admin123" required>
+            </div>
+            <button type="submit" class="btn btn-primary-custom w-100 text-white">Ingresar <i class="bi bi-arrow-right-short ms-1"></i></button>
+            <div class="mt-3 text-center small text-secondary">
+                <i class="bi bi-info-circle"></i> Admin: admin · Pass: admin123 | Demo: demo · Pass: 1234
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboardContainer">
+    <!-- HEADER -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+        <div>
+            <h4 class="fw-bold d-flex align-items-center gap-2" style="color: #0b1e3a;">
+                <i class="bi bi-graph-up-arrow" style="color: #1f3a6b;"></i> Panel Financiero
+            </h4>
+            <span id="negocioNombreBadge" class="badge bg-soft-primary text-primary px-3 py-2 rounded-pill">
+                <i class="bi bi-building me-1"></i> <span id="negocioNombreDisplay">Mi Negocio</span>
+            </span>
+            <span id="userRoleBadge" class="badge badge-soft-info ms-2 px-3 py-2">👤 Usuario</span>
+            <span id="userTypeBadge" class="badge badge-soft-secondary ms-2 px-3 py-2">📋 Tipo</span>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-custom" id="btnCalcularONAT"><i class="bi bi-calculator me-1"></i> ONAT</button>
+            <button class="btn btn-outline-custom" id="btnCerrarMes" style="background:#fce4ec;border-color:#ef4444;color:#a11f2e;"><i class="bi bi-lock me-1"></i> Cerrar Mes</button>
+            <button id="logoutBtn" class="btn btn-outline-custom"><i class="bi bi-box-arrow-right me-1"></i> Salir</button>
+        </div>
+    </div>
+
+    <!-- BARRA DE MES -->
+    <div class="mes-contable-bar" id="mesContableBar">
+        <div class="mes-titulo">
+            <i class="bi bi-calendar3 me-1"></i> Mes Contable:
+            <select id="selectorMes">
+                <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+                <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+            </select>
+            <input type="number" id="selectorAnio" min="2020" max="2100">
+            <button class="btn btn-sm btn-primary" id="btnAplicarMes" style="border-radius:0.5rem;"><i class="bi bi-check"></i></button>
+        </div>
+        <div class="mes-estado">
+            <span class="badge bg-soft-secondary" id="mesContablePeriodo">Periodo</span>
+            <span class="badge bg-success" id="mesContableEstado">✅ Abierto</span>
+            <span class="badge bg-soft-info" id="mesContableMovimientos">📊 0 mov.</span>
+            <span class="badge bg-soft-success" id="mesContableUtilidad">💰 $0.00</span>
+            <span id="mesBloqueadoBadge" class="badge bg-danger" style="display:none;">🚫 Bloqueado</span>
+        </div>
+        <div class="mes-acciones">
+            <button class="btn btn-sm btn-outline-secondary" id="btnVerMesActual" style="display:none;"><i class="bi bi-arrow-left"></i> Actual</button>
+        </div>
+    </div>
+
+    <!-- MODO EDICIÓN -->
+    <div id="modoEdicionMes" class="modo-edicion-mes" style="display:none;">
+        <div class="edicion-info">
+            <i class="bi bi-pencil-square fs-5"></i>
+            <span><strong>Editando mes pasado:</strong> <span id="edicionMesNombre"></span></span>
+            <span class="badge bg-warning">✏️ Edición activa</span>
+        </div>
+        <div>
+            <button class="btn btn-sm btn-success" id="btnGuardarEdicionMes"><i class="bi bi-check me-1"></i> Guardar</button>
+            <button class="btn btn-sm btn-secondary" id="btnCancelarEdicionMes"><i class="bi bi-x me-1"></i> Cancelar</button>
+        </div>
+    </div>
+
+    <!-- NAVEGACIÓN -->
+    <ul class="nav nav-tabs-custom" id="cuentasTabs" role="tablist">
+        <li class="nav-item"><button class="nav-link resumen active" id="tab-resumen" data-bs-toggle="tab" data-bs-target="#pane-resumen"><i class="bi bi-speedometer2 me-1"></i> Resumen</button></li>
+        <li class="nav-item"><button class="nav-link chequera" id="tab-chequera" data-bs-toggle="tab" data-bs-target="#pane-chequera"><i class="bi bi-bank me-1"></i> Chequera</button></li>
+        <li class="nav-item"><button class="nav-link tarjeta_cup" id="tab-tarjeta_cup" data-bs-toggle="tab" data-bs-target="#pane-tarjeta_cup"><i class="bi bi-credit-card me-1"></i> CUP</button></li>
+        <li class="nav-item"><button class="nav-link tarjeta_usd" id="tab-tarjeta_usd" data-bs-toggle="tab" data-bs-target="#pane-tarjeta_usd"><i class="bi bi-currency-dollar me-1"></i> USD</button></li>
+        <li class="nav-item"><button class="nav-link cierre" id="tab-cierre" data-bs-toggle="tab" data-bs-target="#pane-cierre"><i class="bi bi-archive me-1"></i> Historial</button></li>
+        <li class="nav-item" id="adminTabNav" style="display:none;"><button class="nav-link admin" id="tab-admin" data-bs-toggle="tab" data-bs-target="#pane-admin"><i class="bi bi-shield-lock me-1"></i> Admin</button></li>
+    </ul>
+
+    <!-- CONTENIDO -->
+    <div class="tab-content" id="cuentasTabsContent">
+
+        <!-- RESUMEN -->
+        <div class="tab-pane fade show active" id="pane-resumen">
+            <div id="alertaFinanciera" class="alerta-financiera"></div>
+            <div class="row g-3 mb-4" id="resumenCuentas"></div>
+            <div class="card p-3 p-md-4">
+                <h6 class="fw-semibold mb-3"><i class="bi bi-table me-2"></i>Todos los movimientos</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="movimientosTable">
+                        <thead><tr><th>Concepto</th><th>Tipo</th><th>Clasificación</th><th>Cuenta</th><th class="text-end">Monto</th><th class="text-center">Fecha</th></tr></thead>
+                        <tbody id="movimientosBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHEQUERA -->
+        <div class="tab-pane fade" id="pane-chequera">
+            <div class="card p-3 p-md-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <h6 class="fw-semibold mb-0"><i class="bi bi-bank me-2" style="color:#1f3a6b;"></i>Chequera</h6>
+                    <div class="d-flex flex-wrap gap-2" id="botonesChequera">
+                        <button class="btn btn-sm btn-success btn-ingreso-cuenta" data-cuenta="chequera"><i class="bi bi-plus-circle"></i> Ingreso</button>
+                        <button class="btn btn-sm btn-danger btn-gasto-cuenta" data-cuenta="chequera"><i class="bi bi-dash-circle"></i> Gasto</button>
+                        <button class="btn btn-sm btn-warning btn-onat-cuenta" data-cuenta="chequera"><i class="bi bi-file-check"></i> ONAT</button>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-3 mb-3">
+                    <span class="badge bg-soft-secondary px-3 py-2">📌 Saldo Inicial: <span id="saldoInicial-chequera">$0.00</span></span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">💰 Saldo Actual: <span id="saldo-chequera">$0.00</span></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead><tr><th>Concepto</th><th>Tipo</th><th>Clasificación</th><th class="text-end">Monto</th><th class="text-center">Fecha</th><th class="text-center">Acción</th></tr></thead>
+                        <tbody id="body-chequera"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUP -->
+        <div class="tab-pane fade" id="pane-tarjeta_cup">
+            <div class="card p-3 p-md-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <h6 class="fw-semibold mb-0"><i class="bi bi-credit-card me-2" style="color:#0b5e3a;"></i>Tarjeta CUP</h6>
+                    <div class="d-flex flex-wrap gap-2" id="botonesCUP">
+                        <button class="btn btn-sm btn-success btn-ingreso-cuenta" data-cuenta="tarjeta_cup"><i class="bi bi-plus-circle"></i> Ingreso</button>
+                        <button class="btn btn-sm btn-danger btn-gasto-cuenta" data-cuenta="tarjeta_cup"><i class="bi bi-dash-circle"></i> Gasto</button>
+                        <button class="btn btn-sm btn-warning btn-onat-cuenta" data-cuenta="tarjeta_cup"><i class="bi bi-file-check"></i> ONAT</button>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-3 mb-3">
+                    <span class="badge bg-soft-secondary px-3 py-2">📌 Saldo Inicial: <span id="saldoInicial-tarjeta_cup">$0.00</span></span>
+                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">💰 Saldo Actual: <span id="saldo-tarjeta_cup">$0.00</span></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead><tr><th>Concepto</th><th>Tipo</th><th>Clasificación</th><th class="text-end">Monto</th><th class="text-center">Fecha</th><th class="text-center">Acción</th></tr></thead>
+                        <tbody id="body-tarjeta_cup"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- USD -->
+        <div class="tab-pane fade" id="pane-tarjeta_usd">
+            <div class="card p-3 p-md-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <h6 class="fw-semibold mb-0"><i class="bi bi-currency-dollar me-2" style="color:#0e7490;"></i>Tarjeta USD</h6>
+                    <div class="d-flex flex-wrap gap-2" id="botonesUSD">
+                        <button class="btn btn-sm btn-success btn-ingreso-cuenta" data-cuenta="tarjeta_usd"><i class="bi bi-plus-circle"></i> Ingreso</button>
+                        <button class="btn btn-sm btn-danger btn-gasto-cuenta" data-cuenta="tarjeta_usd"><i class="bi bi-dash-circle"></i> Gasto</button>
+                        <button class="btn btn-sm btn-warning btn-onat-cuenta" data-cuenta="tarjeta_usd"><i class="bi bi-file-check"></i> ONAT</button>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap gap-3 mb-3">
+                    <span class="badge bg-soft-secondary px-3 py-2">📌 Saldo Inicial: <span id="saldoInicial-tarjeta_usd">$0.00 USD</span></span>
+                    <span class="badge bg-info bg-opacity-10 text-info px-3 py-2">💰 Saldo Actual: <span id="saldo-tarjeta_usd">$0.00 USD</span></span>
+                    <span class="badge bg-soft-secondary px-3 py-2">🔄 Equiv CUP: <span id="saldo-tarjeta_usd_cup">$0.00</span></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead><tr><th>Concepto</th><th>Tipo</th><th>Clasificación</th><th class="text-end">Monto (USD)</th><th class="text-center">Fecha</th><th class="text-center">Acción</th></tr></thead>
+                        <tbody id="body-tarjeta_usd"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- HISTORIAL -->
+        <div class="tab-pane fade" id="pane-cierre">
+            <div class="card p-3 p-md-4">
+                <h6 class="fw-semibold mb-3"><i class="bi bi-archive me-2"></i>Historial de Meses</h6>
+                <div id="historialMeses" class="mb-3"></div>
+                <hr>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6 class="fw-semibold"><i class="bi bi-arrow-right-circle me-1"></i> Saldo Inicial del Mes</h6>
+                        <div class="d-flex gap-3 flex-wrap" id="saldoInicialDisplay"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-semibold"><i class="bi bi-arrow-left-circle me-1"></i> Mes Actual</h6>
+                        <div class="d-flex gap-3 flex-wrap" id="mesActualDisplay"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN -->
+        <div class="tab-pane fade" id="pane-admin">
+            <div class="row g-3">
+                <!-- Gestión de Usuarios -->
+                <div class="col-lg-6">
+                    <div class="card p-3 p-md-4">
+                        <h6 class="fw-semibold mb-3"><i class="bi bi-people me-2"></i>Gestión de Usuarios</h6>
+                        <div class="mb-3">
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <input type="text" class="form-control form-control-sm" id="newNegocioNombre" placeholder="Nombre del Negocio">
+                                </div>
+                            </div>
+                            <div class="row g-2 mt-2">
+                                <div class="col-4"><input type="text" class="form-control form-control-sm" id="newUser" placeholder="Usuario"></div>
+                                <div class="col-4"><input type="text" class="form-control form-control-sm" id="newPass" placeholder="Contraseña"></div>
+                                <div class="col-4">
+                                    <select class="form-select form-select-sm" id="newRole">
+                                        <option value="consultor">👁️ Consultor</option>
+                                        <option value="editor">✏️ Editor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row g-2 mt-2">
+                                <div class="col-5">
+                                    <select class="form-select form-select-sm" id="newEntityType">
+                                        <option value="tcp">TCP</option>
+                                        <option value="mipyme">MIPYME</option>
+                                    </select>
+                                </div>
+                                <div class="col-4" id="divSocios">
+                                    <input type="number" class="form-control form-control-sm" id="newSocios" placeholder="Socios" min="1" value="1">
+                                </div>
+                                <div class="col-3">
+                                    <button class="btn btn-success btn-sm w-100" id="btnCrearUsuario"><i class="bi bi-plus"></i> Crear</button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div id="listaUsuariosAdmin">
+                            <!-- Se llena con JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bloqueo de Meses -->
+                <div class="col-lg-6">
+                    <div class="card p-3 p-md-4">
+                        <h6 class="fw-semibold mb-3"><i class="bi bi-calendar-lock me-2"></i>Bloqueo de Meses</h6>
+                        <p class="small text-muted">Marca los meses que no han pagado. Los usuarios no podrán acceder a esos meses.</p>
+                        <div id="bloqueoMesesList">
+                            <!-- Se llena con JS -->
+                        </div>
+                        <hr>
+                        <div class="mt-2">
+                            <h6 class="fw-semibold"><i class="bi bi-info-circle me-1"></i>Leyenda</h6>
+                            <span class="badge bg-success">✅ Desbloqueado</span>
+                            <span class="badge bg-danger ms-2">🚫 Bloqueado</span>
+                            <span class="badge bg-soft-secondary ms-2">📅 Click para cambiar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODALES -->
+<div class="modal fade" id="onatModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title"><i class="bi bi-file-earmark-text me-2"></i>Cálculo ONAT</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body" id="onatModalBody"></div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button><button type="button" class="btn btn-primary-custom" id="btnAgregarOnatDesdeModal"><i class="bi bi-plus-circle me-1"></i> Registrar</button></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="clasificacionModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title"><i class="bi bi-tags me-2"></i>Clasificación</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="d-flex flex-column gap-2">
+                    <button class="btn btn-outline-primary btn-clasificacion" data-clasificacion="operacional"><i class="bi bi-cash-stack me-2"></i> 💰 Operacional</button>
+                    <button class="btn btn-outline-warning btn-clasificacion" data-clasificacion="transferencia"><i class="bi bi-arrow-left-right me-2"></i> 🔄 Transferencia</button>
+                    <button class="btn btn-outline-danger btn-clasificacion" data-clasificacion="extraccion"><i class="bi bi-box-arrow-right me-2"></i> 🏦 Extracción</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="saldoInicialModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title"><i class="bi bi-wallet2 me-2"></i>Saldo Inicial</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <p class="text-muted small">Saldo inicial del mes <strong id="modalMesActual"></strong></p>
+                <div class="mb-3"><label class="form-label fw-semibold">🏦 Chequera (CUP)</label><input type="number" class="form-control" id="saldoInicialChequera" step="0.01" value="0"></div>
+                <div class="mb-3"><label class="form-label fw-semibold">💳 Tarjeta CUP</label><input type="number" class="form-control" id="saldoInicialCUP" step="0.01" value="0"></div>
+                <div class="mb-3"><label class="form-label fw-semibold">💵 Tarjeta USD</label><input type="number" class="form-control" id="saldoInicialUSD" step="0.01" value="0"></div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Omitir</button><button type="button" class="btn btn-primary-custom" id="btnGuardarSaldoInicial"><i class="bi bi-check me-1"></i> Guardar</button></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function(){
+        const TASA_USD = 120;
+        const META_UTILIDAD = 15;
+        const TOLERANCIA = 0.5;
+        
+        // ===== SISTEMA DE USUARIOS AVANZADO =====
+        const USERS_KEY = 'finanzas_usuarios_v2';
+        const CURRENT_USER_KEY = 'finanzas_current_user';
+        const BLOQUEO_KEY = 'finanzas_bloqueo_meses';
+        
+        function getDefaultUsers() {
+            return {
+                'admin': { 
+                    password: 'admin123', 
+                    role: 'admin',
+                    entityType: 'admin',
+                    socios: 0,
+                    negocio: 'Administrador'
+                },
+                'demo': { 
+                    password: '1234', 
+                    role: 'consultor',
+                    entityType: 'tcp',
+                    socios: 0,
+                    negocio: 'Licorería "El Centro"'
+                },
+                'editor1': { 
+                    password: '1234', 
+                    role: 'editor',
+                    entityType: 'mipyme',
+                    socios: 3,
+                    negocio: 'MIPYME "Los Amigos"'
+                }
+            };
+        }
+        
+        function getUsuarios() {
+            const stored = localStorage.getItem(USERS_KEY);
+            if (stored) {
+                try { return JSON.parse(stored); }
+                catch(e) { return getDefaultUsers(); }
+            }
+            return getDefaultUsers();
+        }
+        
+        function saveUsuarios(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+        
+        function getCurrentUser() { return localStorage.getItem(CURRENT_USER_KEY) || null; }
+        function setCurrentUser(username) {
+            if (username) { localStorage.setItem(CURRENT_USER_KEY, username); }
+            else { localStorage.removeItem(CURRENT_USER_KEY); }
+        }
+        
+        function authenticate(username, password) {
+            const users = getUsuarios();
+            if (users[username] && users[username].password === password) {
+                return users[username];
+            }
+            return null;
+        }
+        
+        function isAdmin() {
+            const user = getCurrentUser();
+            if (!user) return false;
+            const users = getUsuarios();
+            return users[user] && users[user].role === 'admin';
+        }
+        
+        function getRolUsuario() {
+            const user = getCurrentUser();
+            if (!user) return null;
+            const users = getUsuarios();
+            return users[user] ? users[user].role : null;
+        }
+        
+        function getEntityType() {
+            const user = getCurrentUser();
+            if (!user) return null;
+            const users = getUsuarios();
+            return users[user] ? users[user].entityType : null;
+        }
+        
+        function getSocios() {
+            const user = getCurrentUser();
+            if (!user) return 0;
+            const users = getUsuarios();
+            return users[user] ? (users[user].socios || 0) : 0;
+        }
+        
+        function getNegocioNombre() {
+            const user = getCurrentUser();
+            if (!user) return 'Mi Negocio';
+            const users = getUsuarios();
+            return users[user] ? (users[user].negocio || 'Mi Negocio') : 'Mi Negocio';
+        }
+        
+        function puedeEditar() {
+            const rol = getRolUsuario();
+            return rol === 'admin' || rol === 'editor';
+        }
+        
+        function getBloqueoMeses() {
+            const stored = localStorage.getItem(BLOQUEO_KEY);
+            if (stored) {
+                try { return JSON.parse(stored); }
+                catch(e) { return {}; }
+            }
+            return {};
+        }
+        
+        function saveBloqueoMeses(data) {
+            localStorage.setItem(BLOQUEO_KEY, JSON.stringify(data));
+        }
+        
+        function mesEstaBloqueado(mesStr) {
+            const bloqueos = getBloqueoMeses();
+            return bloqueos[mesStr] === true;
+        }
+
+        // ===== SISTEMA DE CIERRE MES =====
+        function getMesKey() {
+            const user = getCurrentUser();
+            return `finanzas_mes_${user}`;
+        }
+
+        function getHistorialKey() {
+            const user = getCurrentUser();
+            return `finanzas_historial_${user}`;
+        }
+
+        function getMesActual() {
+            const key = getMesKey();
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                try { return JSON.parse(stored); }
+                catch(e) { return null; }
+            }
+            return null;
+        }
+
+        function saveMesActual(data) {
+            const key = getMesKey();
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        function getHistorial() {
+            const key = getHistorialKey();
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                try { return JSON.parse(stored); }
+                catch(e) { return []; }
+            }
+            return [];
+        }
+
+        function saveHistorial(historial) {
+            const key = getHistorialKey();
+            localStorage.setItem(key, JSON.stringify(historial));
+        }
+
+        function getNombreMes(numero) {
+            const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            return meses[numero - 1] || numero;
+        }
+
+        function getFechaStr(mes, anio) {
+            return `${getNombreMes(mes)} ${anio}`;
+        }
+
+        function getMesActualStr() {
+            const ahora = new Date();
+            return getFechaStr(ahora.getMonth() + 1, ahora.getFullYear());
+        }
+
+        function obtenerSiguienteMes(mesStr) {
+            const partes = mesStr.split(' ');
+            if (partes.length !== 2) return getMesActualStr();
+            const nombreMes = partes[0];
+            const anio = parseInt(partes[1]);
+            const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            const index = meses.indexOf(nombreMes);
+            if (index === -1) return getMesActualStr();
+            let nuevoMes = index + 2;
+            let nuevoAnio = anio;
+            if (nuevoMes > 12) { nuevoMes = 1; nuevoAnio = anio + 1; }
+            return `${meses[nuevoMes - 1]} ${nuevoAnio}`;
+        }
+
+        // ===== DATOS DE MOVIMIENTOS =====
+        function getMovimientosKey() {
+            const user = getCurrentUser();
+            return `finanzas_movimientos_${user}`;
+        }
+        
+        function getDefaultMovimientos() {
+            return [
+                { id: 1, concepto: 'Venta día', tipo: 'ingreso', clasificacion: 'operacional', cuenta: 'chequera', monto: 450.00, fecha: new Date().toISOString().split('T')[0] },
+                { id: 2, concepto: 'Compra mercancía', tipo: 'gasto', clasificacion: 'operacional', cuenta: 'tarjeta_cup', monto: 210.00, fecha: new Date().toISOString().split('T')[0] },
+                { id: 3, concepto: 'Aporte ONAT', tipo: 'onat', clasificacion: 'operacional', cuenta: 'chequera', monto: 85.50, fecha: new Date().toISOString().split('T')[0] },
+                { id: 4, concepto: 'Venta online', tipo: 'ingreso', clasificacion: 'operacional', cuenta: 'tarjeta_usd', monto: 120.00, fecha: new Date().toISOString().split('T')[0] },
+                { id: 5, concepto: 'Alquiler local', tipo: 'gasto', clasificacion: 'operacional', cuenta: 'chequera', monto: 300.00, fecha: new Date().toISOString().split('T')[0] },
+            ];
+        }
+        
+        function getMovimientos() {
+            const key = getMovimientosKey();
+            const stored = localStorage.getItem(key);
+            if (stored) {
+                try { 
+                    const data = JSON.parse(stored);
+                    data.forEach(m => { if (!m.clasificacion) m.clasificacion = 'operacional'; });
+                    return data;
+                }
+                catch(e) { return getDefaultMovimientos(); }
+            }
+            return getDefaultMovimientos();
+        }
+        
+        function saveMovimientos(movs) {
+            const key = getMovimientosKey();
+            localStorage.setItem(key, JSON.stringify(movs));
+        }
+        
+        let movimientos = getMovimientos();
+        let nextId = movimientos.length > 0 ? Math.max(...movimientos.map(m => m.id)) + 1 : 1;
+
+        // ===== VARIABLES =====
+        let modoEdicionActivo = false;
+        let edicionMovimientosOriginal = [];
+        let edicionMesNombre = '';
+        let edicionIndex = -1;
+        let tempMovimiento = { concepto: null, tipo: null, cuenta: null, monto: null, fecha: null };
+
+        // ===== ELEMENTOS DOM =====
+        const loginContainer = document.getElementById('loginContainer');
+        const dashboardContainer = document.getElementById('dashboardContainer');
+        const loginForm = document.getElementById('loginForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const tbody = document.getElementById('movimientosBody');
+        const userRoleBadge = document.getElementById('userRoleBadge');
+        const userTypeBadge = document.getElementById('userTypeBadge');
+        const negocioNombreDisplay = document.getElementById('negocioNombreDisplay');
+        const adminTabNav = document.getElementById('adminTabNav');
+        const mesBloqueadoBadge = document.getElementById('mesBloqueadoBadge');
+
+        const onatModal = new bootstrap.Modal(document.getElementById('onatModal'));
+        const onatModalBody = document.getElementById('onatModalBody');
+        const clasificacionModal = new bootstrap.Modal(document.getElementById('clasificacionModal'));
+        const saldoInicialModal = new bootstrap.Modal(document.getElementById('saldoInicialModal'));
+
+        // ===== FUNCIONES =====
+        function getNombreCuenta(cuenta) {
+            const map = { 'chequera': '🏦 Chequera', 'tarjeta_cup': '💳 Tarjeta CUP', 'tarjeta_usd': '💵 Tarjeta USD' };
+            return map[cuenta] || cuenta;
+        }
+
+        function getClasificacionLabel(clasificacion) {
+            const map = { 'operacional': '💰 Operacional', 'transferencia': '🔄 Transferencia', 'extraccion': '🏦 Extracción' };
+            return map[clasificacion] || clasificacion;
+        }
+
+        function getClasificacionBadge(clasificacion) {
+            return `<span class="clasificacion-badge ${clasificacion}">${getClasificacionLabel(clasificacion)}</span>`;
+        }
+
+        function getMontoEnCUP(monto, cuenta) {
+            return cuenta === 'tarjeta_usd' ? monto * TASA_USD : monto;
+        }
+
+        function getSaldoInicial() {
+            const mesData = getMesActual();
+            if (mesData && mesData.saldoInicial) {
+                return mesData.saldoInicial;
+            }
+            return { chequera: 0, tarjeta_cup: 0, tarjeta_usd: 0 };
+        }
+
+        function calcularResumen(movs) {
+            const data = movs || movimientos;
+            const mesData = getMesActual();
+            let ingresos = 0, gastos = 0, onat = 0;
+            let saldos = {
+                chequera: { ingresos: 0, gastos: 0, onat: 0, monto: 0 },
+                tarjeta_cup: { ingresos: 0, gastos: 0, onat: 0, monto: 0 },
+                tarjeta_usd: { ingresos: 0, gastos: 0, onat: 0, monto: 0 }
+            };
+            
+            data.forEach(m => {
+                const esOperacional = m.clasificacion === 'operacional';
+                const montoCUP = getMontoEnCUP(m.monto, m.cuenta);
+                
+                if (m.tipo === 'ingreso') {
+                    saldos[m.cuenta].ingresos += montoCUP;
+                    saldos[m.cuenta].monto += montoCUP;
+                    if (esOperacional) ingresos += montoCUP;
+                } else if (m.tipo === 'gasto') {
+                    saldos[m.cuenta].gastos += montoCUP;
+                    saldos[m.cuenta].monto -= montoCUP;
+                    if (esOperacional) gastos += montoCUP;
+                } else if (m.tipo === 'onat') {
+                    saldos[m.cuenta].onat += montoCUP;
+                    saldos[m.cuenta].monto -= montoCUP;
+                    if (esOperacional) onat += montoCUP;
+                }
+            });
+            
+            if (!modoEdicionActivo && mesData && mesData.saldoInicial) {
+                const si = mesData.saldoInicial;
+                saldos.chequera.monto += si.chequera || 0;
+                saldos.tarjeta_cup.monto += si.tarjeta_cup || 0;
+                saldos.tarjeta_usd.monto += si.tarjeta_usd || 0;
+            }
+            
+            const utilidad = ingresos - gastos - onat;
+            return { ingresos, gastos, onat, utilidad, saldos };
+        }
+
+        function getMovimientosPorCuenta(cuenta) {
+            return movimientos.filter(m => m.cuenta === cuenta);
+        }
+
+        function getSaldoCuenta(cuenta) {
+            const res = calcularResumen();
+            return res.saldos[cuenta].monto;
+        }
+
+        function calcularONATData(movs) {
+            const res = calcularResumen(movs);
+            const { ingresos, utilidad } = res;
+            return { 
+                ingresos, utilidad, 
+                importeVentas: ingresos * 0.10, 
+                desarrolloLocal: ingresos * 0.01, 
+                aporteUtilidades: utilidad > 0 ? utilidad * 0.35 : 0,
+                totalONAT: (ingresos * 0.10) + (ingresos * 0.01) + (utilidad > 0 ? utilidad * 0.35 : 0)
+            };
+        }
+
+        function irAPestana(cuenta) {
+            const tabId = `tab-${cuenta}`;
+            const tabElement = document.getElementById(tabId);
+            if (tabElement) {
+                const tab = new bootstrap.Tab(tabElement);
+                tab.show();
+            }
+        }
+
+        function buscarMesEnHistorial(mesStr) {
+            const historial = getHistorial();
+            return historial.find(h => h.mes === mesStr);
+        }
+
+        // ===== MOSTRAR/OCULTAR CAMPO DE SOCIOS =====
+        function toggleSocios() {
+            const entityType = document.getElementById('newEntityType').value;
+            const divSocios = document.getElementById('divSocios');
+            if (entityType === 'tcp') {
+                divSocios.classList.add('hidden');
+            } else {
+                divSocios.classList.remove('hidden');
+            }
+        }
+
+        // ===== ACTUALIZAR SELECTOR =====
+        function actualizarSelector() {
+            const mesData = getMesActual();
+            const mesStr = mesData && mesData.mesSeleccionado ? mesData.mesSeleccionado : getMesActualStr();
+            const partes = mesStr.split(' ');
+            if (partes.length === 2) {
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                const index = meses.indexOf(partes[0]);
+                if (index !== -1) {
+                    document.getElementById('selectorMes').value = index + 1;
+                    document.getElementById('selectorAnio').value = parseInt(partes[1]);
+                }
+            }
+        }
+
+        // ===== CARGAR MES CERRADO EN EDICIÓN =====
+        function cargarMesCerrado(mesStr) {
+            const historial = getHistorial();
+            const index = historial.findIndex(h => h.mes === mesStr);
+            if (index === -1) return false;
+            
+            const mes = historial[index];
+            edicionMovimientosOriginal = JSON.parse(JSON.stringify(movimientos));
+            edicionMesNombre = mes.mes;
+            edicionIndex = index;
+            
+            if (mes.movimientos) {
+                movimientos = JSON.parse(JSON.stringify(mes.movimientos));
+                nextId = movimientos.length > 0 ? Math.max(...movimientos.map(m => m.id)) + 1 : 1;
+            } else {
+                movimientos = [];
+                nextId = 1;
+            }
+            
+            const mesData = getMesActual() || {};
+            mesData.mesSeleccionado = mes.mes;
+            mesData.cerrado = true;
+            mesData.saldoInicial = mes.saldoInicial || { chequera: 0, tarjeta_cup: 0, tarjeta_usd: 0 };
+            saveMesActual(mesData);
+            
+            modoEdicionActivo = true;
+            document.getElementById('modoEdicionMes').style.display = 'flex';
+            document.getElementById('edicionMesNombre').textContent = mes.mes;
+            
+            actualizarBarraMes();
+            renderAll();
+            return true;
+        }
+
+        // ===== CAMBIAR MES DESDE SELECTOR =====
+        function cambiarMesDesdeSelector() {
+            const mes = parseInt(document.getElementById('selectorMes').value);
+            const anio = parseInt(document.getElementById('selectorAnio').value);
+            if (!mes || !anio) { alert('Selecciona un mes y año válidos.'); return; }
+            
+            const nombreMes = getFechaStr(mes, anio);
+            
+            if (mesEstaBloqueado(nombreMes) && !isAdmin()) {
+                alert('🚫 Este mes está bloqueado. Contacta al administrador.');
+                actualizarSelector();
+                return;
+            }
+            
+            const mesData = getMesActual();
+            const mesActualStr = mesData && mesData.mesSeleccionado ? mesData.mesSeleccionado : getMesActualStr();
+            if (mesActualStr === nombreMes) return;
+            
+            const mesEnHistorial = buscarMesEnHistorial(nombreMes);
+            
+            if (mesEnHistorial) {
+                if (modoEdicionActivo && !confirm('Hay cambios sin guardar. ¿Continuar?')) {
+                    actualizarSelector();
+                    return;
+                }
+                cargarMesCerrado(nombreMes);
+                return;
+            }
+            
+            if (movimientos.length > 0) {
+                if (!mesData || !mesData.cerrado) {
+                    if (!confirm(`El mes actual (${mesActualStr}) tiene ${movimientos.length} movimientos sin cerrar.\n¿Seguro que quieres cambiar a ${nombreMes}?`)) {
+                        actualizarSelector();
+                        return;
+                    }
+                }
+            }
+            
+            if (modoEdicionActivo) {
+                modoEdicionActivo = false;
+                document.getElementById('modoEdicionMes').style.display = 'none';
+            }
+            
+            const nuevoMesData = mesData || {};
+            nuevoMesData.mesSeleccionado = nombreMes;
+            nuevoMesData.cerrado = false;
+            nuevoMesData.saldoInicial = { chequera: 0, tarjeta_cup: 0, tarjeta_usd: 0 };
+            nuevoMesData.inicioMes = new Date().toISOString().split('T')[0];
+            saveMesActual(nuevoMesData);
+            
+            movimientos = [];
+            nextId = 1;
+            saveMovimientos(movimientos);
+            
+            renderAll();
+            actualizarSelector();
+            
+            document.getElementById('saldoInicialChequera').value = 0;
+            document.getElementById('saldoInicialCUP').value = 0;
+            document.getElementById('saldoInicialUSD').value = 0;
+            document.getElementById('modalMesActual').textContent = nombreMes;
+            saldoInicialModal.show();
+        }
+
+        // ===== ACTUALIZAR BARRA =====
+        function actualizarBarraMes() {
+            const mesData = getMesActual();
+            const estaCerrado = mesData && mesData.cerrado;
+            const res = calcularResumen();
+            const mesStr = mesData && mesData.mesSeleccionado ? mesData.mesSeleccionado : getMesActualStr();
+            
+            document.getElementById('mesContablePeriodo').textContent = `📅 ${mesStr}`;
+            document.getElementById('mesContableEstado').textContent = modoEdicionActivo ? '✏️ Editando' : (estaCerrado ? '🔒 Cerrado' : '✅ Abierto');
+            document.getElementById('mesContableEstado').className = `badge ${modoEdicionActivo ? 'bg-warning' : (estaCerrado ? 'bg-danger' : 'bg-success')}`;
+            document.getElementById('mesContableMovimientos').textContent = `📊 ${movimientos.length} mov.`;
+            document.getElementById('mesContableUtilidad').textContent = `💰 $${res.utilidad.toFixed(2)}`;
+            
+            const bloqueado = mesEstaBloqueado(mesStr);
+            document.getElementById('mesBloqueadoBadge').style.display = bloqueado ? 'inline-block' : 'none';
+            
+            actualizarSelector();
+        }
+
+        // ===== RENDER: ADMIN =====
+        function renderAdminPanel() {
+            const users = getUsuarios();
+            const currentUser = getCurrentUser();
+            
+            let html = '';
+            const userList = Object.keys(users);
+            userList.forEach(username => {
+                const user = users[username];
+                const isCurrent = username === currentUser;
+                const avatarColor = user.role === 'admin' ? '#92400e' : (user.role === 'editor' ? '#0b5e3a' : '#1f3a6b');
+                const initials = username.substring(0, 2).toUpperCase();
+                const rolLabel = user.role === 'admin' ? '👑 Admin' : (user.role === 'editor' ? '✏️ Editor' : '👁️ Consultor');
+                const entityLabel = user.entityType === 'mipyme' ? `MIPYME (${user.socios || 1} socios)` : 'TCP';
+                const negocioLabel = user.negocio || 'Sin nombre';
+                
+                html += `
+                    <div class="usuario-item">
+                        <div class="usuario-info">
+                            <div class="avatar" style="background:${avatarColor};">${initials}</div>
+                            <div>
+                                <div class="fw-semibold">${username} ${isCurrent ? '👈' : ''}</div>
+                                <small class="text-muted">${rolLabel} · ${entityLabel} · 🏢 ${negocioLabel}</small>
+                            </div>
+                        </div>
+                        ${username !== 'admin' ? `<button class="btn btn-sm btn-outline-danger eliminar-usuario" data-user="${username}"><i class="bi bi-trash3"></i></button>` : '<span class="badge badge-admin">Protegido</span>'}
+                    </div>
+                `;
+            });
+            document.getElementById('listaUsuariosAdmin').innerHTML = html;
+            
+            document.querySelectorAll('.eliminar-usuario').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const user = this.getAttribute('data-user');
+                    if (confirm(`¿Eliminar al usuario "${user}"?`)) {
+                        const users = getUsuarios();
+                        delete users[user];
+                        saveUsuarios(users);
+                        renderAdminPanel();
+                        alert(`Usuario "${user}" eliminado.`);
+                    }
+                });
+            });
+            
+            renderBloqueoMeses();
+        }
+
+        // ===== RENDER: BLOQUEO DE MESES =====
+        function renderBloqueoMeses() {
+            const bloqueos = getBloqueoMeses();
+            const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            const anioActual = new Date().getFullYear();
+            
+            let html = '<div class="row g-2">';
+            for (let i = 0; i < 12; i++) {
+                const mesStr = `${meses[i]} ${anioActual}`;
+                const bloqueado = bloqueos[mesStr] === true;
+                html += `
+                    <div class="col-3">
+                        <div class="mes-bloqueado-item" style="cursor:pointer;border:1px solid #eef2f6;border-radius:0.5rem;padding:0.5rem;text-align:center;" onclick="toggleBloqueoMes('${mesStr}')">
+                            <div>${meses[i]}</div>
+                            <span class="badge ${bloqueado ? 'bg-danger' : 'bg-success'}">${bloqueado ? '🚫 Bloqueado' : '✅ Libre'}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            document.getElementById('bloqueoMesesList').innerHTML = html;
+        }
+
+        // ===== TOGGLE BLOQUEO MES =====
+        window.toggleBloqueoMes = function(mesStr) {
+            if (!isAdmin()) {
+                alert('Solo el administrador puede bloquear meses.');
+                return;
+            }
+            const bloqueos = getBloqueoMeses();
+            bloqueos[mesStr] = !bloqueos[mesStr];
+            saveBloqueoMeses(bloqueos);
+            renderBloqueoMeses();
+            actualizarBarraMes();
+        };
+
+        // ===== RENDER: RESUMEN DE CUENTAS =====
+        function renderResumenCuentas() {
+            const res = calcularResumen();
+            const cuentas = [
+                { key: 'chequera', label: '🏦 Chequera', color: '#1f3a6b' },
+                { key: 'tarjeta_cup', label: '💳 Tarjeta CUP', color: '#0b5e3a' },
+                { key: 'tarjeta_usd', label: '💵 Tarjeta USD', color: '#0e7490' }
+            ];
+            
+            document.getElementById('resumenCuentas').innerHTML = cuentas.map(c => {
+                const saldo = res.saldos[c.key];
+                const total = saldo.monto;
+                const esUSD = c.key === 'tarjeta_usd';
+                const moneda = esUSD ? 'USD' : 'CUP';
+                const valor = esUSD ? (total / TASA_USD) : total;
+                
+                return `
+                    <div class="col-md-4">
+                        <div class="resumen-tarjeta ${c.key}">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-semibold mb-1" style="color:${c.color};">${c.label}</h6>
+                                    <div class="d-flex gap-3 flex-wrap small">
+                                        <span>📈 +$${(esUSD ? saldo.ingresos/TASA_USD : saldo.ingresos).toFixed(2)}</span>
+                                        <span>📉 -$${(esUSD ? saldo.gastos/TASA_USD : saldo.gastos).toFixed(2)}</span>
+                                        <span>📄 -$${(esUSD ? saldo.onat/TASA_USD : saldo.onat).toFixed(2)}</span>
+                                    </div>
+                                </div>
+                                <span class="badge ${total >= 0 ? 'bg-success' : 'bg-danger'} fs-6 px-3 py-2" style="cursor:pointer;" onclick="irAPestana('${c.key}')">
+                                    ${total >= 0 ? '+' : '-'} $${Math.abs(valor).toFixed(2)} ${moneda} 
+                                    <i class="bi bi-arrow-right-circle ms-1"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== RENDER: TABLA GENERAL =====
+        function renderTablaGeneral() {
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const sorted = [...movimientos].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+            sorted.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.className = 'fila-clickeable';
+                tr.setAttribute('data-cuenta', m.cuenta);
+                tr.style.cursor = 'pointer';
+                
+                const montoCUP = getMontoEnCUP(m.monto, m.cuenta);
+                const esUSD = m.cuenta === 'tarjeta_usd';
+                const moneda = esUSD ? 'USD' : 'CUP';
+                const valor = esUSD ? m.monto : montoCUP;
+                
+                let badgeTipo = '';
+                if (m.tipo === 'ingreso') badgeTipo = '<span class="badge badge-soft-success rounded-pill"><i class="bi bi-arrow-up-short"></i> Ingreso</span>';
+                else if (m.tipo === 'gasto') badgeTipo = '<span class="badge badge-soft-danger rounded-pill"><i class="bi bi-arrow-down-short"></i> Gasto</span>';
+                else if (m.tipo === 'onat') badgeTipo = '<span class="badge badge-soft-warning rounded-pill"><i class="bi bi-file-check"></i> ONAT</span>';
+                
+                let badgeCuenta = '';
+                if (m.cuenta === 'chequera') badgeCuenta = '<span class="badge bg-primary bg-opacity-10 text-primary badge-cuenta">🏦 Chequera</span>';
+                else if (m.cuenta === 'tarjeta_cup') badgeCuenta = '<span class="badge bg-success bg-opacity-10 text-success badge-cuenta">💳 Tarjeta CUP</span>';
+                else if (m.cuenta === 'tarjeta_usd') badgeCuenta = '<span class="badge bg-info bg-opacity-10 text-info badge-cuenta">💵 Tarjeta USD</span>';
+                
+                let montoStr = `$${valor.toFixed(2)} ${moneda}`;
+                if (m.tipo === 'gasto' || m.tipo === 'onat') montoStr = `<span class="text-danger">- $${valor.toFixed(2)} ${moneda}</span>`;
+                else if (m.tipo === 'ingreso') montoStr = `<span class="text-success">+ $${valor.toFixed(2)} ${moneda}</span>`;
+                
+                if (esUSD) {
+                    montoStr += `<br><small class="text-muted">($${montoCUP.toFixed(2)} CUP)</small>`;
+                }
+
+                tr.innerHTML = `
+                    <td><span class="fw-medium">${m.concepto}</span></td>
+                    <td>${badgeTipo}</td>
+                    <td>${getClasificacionBadge(m.clasificacion || 'operacional')}</td>
+                    <td>${badgeCuenta}</td>
+                    <td class="text-end">${montoStr}</td>
+                    <td class="text-center small">${m.fecha}</td>
+                `;
+                
+                tr.addEventListener('click', function() {
+                    const cuenta = this.getAttribute('data-cuenta');
+                    irAPestana(cuenta);
+                });
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ===== RENDER: TABLA POR CUENTA =====
+        function renderTablaCuenta(cuenta) {
+            const tbodyId = `body-${cuenta}`;
+            const tbodyCuenta = document.getElementById(tbodyId);
+            if (!tbodyCuenta) return;
+            
+            const movs = getMovimientosPorCuenta(cuenta);
+            const sorted = [...movs].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+            const esUSD = cuenta === 'tarjeta_usd';
+            const moneda = esUSD ? 'USD' : 'CUP';
+            
+            const si = getSaldoInicial();
+            const saldoInicialVal = esUSD ? (si[cuenta] || 0) : (si[cuenta] || 0);
+            document.getElementById(`saldoInicial-${cuenta}`).textContent = `$${saldoInicialVal.toFixed(2)} ${esUSD ? 'USD' : 'CUP'}`;
+            
+            const puedeEditarUsuario = puedeEditar();
+            
+            tbodyCuenta.innerHTML = sorted.map(m => {
+                const valor = esUSD ? m.monto : getMontoEnCUP(m.monto, m.cuenta);
+                let badgeTipo = '';
+                if (m.tipo === 'ingreso') badgeTipo = '<span class="badge badge-soft-success rounded-pill"><i class="bi bi-arrow-up-short"></i> Ingreso</span>';
+                else if (m.tipo === 'gasto') badgeTipo = '<span class="badge badge-soft-danger rounded-pill"><i class="bi bi-arrow-down-short"></i> Gasto</span>';
+                else if (m.tipo === 'onat') badgeTipo = '<span class="badge badge-soft-warning rounded-pill"><i class="bi bi-file-check"></i> ONAT</span>';
+                
+                let montoStr = `$${valor.toFixed(2)} ${moneda}`;
+                if (m.tipo === 'gasto' || m.tipo === 'onat') montoStr = `<span class="text-danger">- $${valor.toFixed(2)} ${moneda}</span>`;
+                else if (m.tipo === 'ingreso') montoStr = `<span class="text-success">+ $${valor.toFixed(2)} ${moneda}</span>`;
+                
+                let botones = '';
+                if (puedeEditarUsuario) {
+                    botones = `
+                        <button class="btn btn-sm btn-outline-primary border-0 editar-mov" data-id="${m.id}" title="Editar"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger border-0 eliminar-mov-cuenta" data-id="${m.id}" data-cuenta="${cuenta}" title="Eliminar"><i class="bi bi-trash3"></i></button>
+                    `;
+                } else {
+                    botones = '<span class="text-muted small">🔒 Solo vista</span>';
+                }
+                
+                return `
+                    <tr>
+                        <td><span class="fw-medium">${m.concepto}</span></td>
+                        <td>${badgeTipo}</td>
+                        <td>${getClasificacionBadge(m.clasificacion || 'operacional')}</td>
+                        <td class="text-end">${montoStr}</td>
+                        <td class="text-center small">${m.fecha}</td>
+                        <td class="text-center">${botones}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            if (puedeEditarUsuario) {
+                document.querySelectorAll(`#body-${cuenta} .eliminar-mov-cuenta`).forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.getAttribute('data-id'));
+                        if (confirm('¿Eliminar este movimiento?')) {
+                            movimientos = movimientos.filter(m => m.id !== id);
+                            saveMovimientos(movimientos);
+                            renderAll();
+                        }
+                    });
+                });
+                
+                document.querySelectorAll(`#body-${cuenta} .editar-mov`).forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.getAttribute('data-id'));
+                        abrirEditorMovimiento(id);
+                    });
+                });
+            }
+            
+            const saldo = getSaldoCuenta(cuenta);
+            const saldoMostrar = esUSD ? (saldo / TASA_USD) : saldo;
+            document.getElementById(`saldo-${cuenta}`).textContent = `${saldo >= 0 ? '+' : '-'} $${Math.abs(saldoMostrar).toFixed(2)} ${esUSD ? 'USD' : 'CUP'}`;
+            
+            if (esUSD) {
+                document.getElementById(`saldo-${cuenta}_cup`).textContent = `$${saldo.toFixed(2)}`;
+            }
+        }
+
+        // ===== ABRIR EDITOR DE MOVIMIENTO =====
+        function abrirEditorMovimiento(id) {
+            if (!puedeEditar()) {
+                alert('No tienes permisos para editar.');
+                return;
+            }
+            const movimiento = movimientos.find(m => m.id === id);
+            if (!movimiento) return;
+            
+            const nuevoConcepto = prompt('Concepto:', movimiento.concepto);
+            if (nuevoConcepto === null) return;
+            const nuevoMonto = prompt('Monto:', movimiento.monto);
+            if (nuevoMonto === null) return;
+            const montoNum = parseFloat(nuevoMonto);
+            if (isNaN(montoNum) || montoNum <= 0) { alert('Monto inválido'); return; }
+            const nuevaFecha = prompt('Fecha (AAAA-MM-DD):', movimiento.fecha);
+            if (nuevaFecha === null) return;
+            const nuevaCuenta = prompt('Cuenta (chequera, tarjeta_cup, tarjeta_usd):', movimiento.cuenta);
+            if (nuevaCuenta === null) return;
+            if (!['chequera', 'tarjeta_cup', 'tarjeta_usd'].includes(nuevaCuenta)) { alert('Cuenta inválida'); return; }
+            const nuevaClasificacion = prompt('Clasificación (operacional, transferencia, extraccion):', movimiento.clasificacion || 'operacional');
+            if (nuevaClasificacion === null) return;
+            if (!['operacional', 'transferencia', 'extraccion'].includes(nuevaClasificacion)) { alert('Clasificación inválida'); return; }
+            
+            movimiento.concepto = nuevoConcepto.trim();
+            movimiento.monto = montoNum;
+            movimiento.fecha = nuevaFecha;
+            movimiento.cuenta = nuevaCuenta;
+            movimiento.clasificacion = nuevaClasificacion;
+            
+            saveMovimientos(movimientos);
+            renderAll();
+            alert('✅ Movimiento actualizado correctamente.');
+        }
+
+        // ===== RENDER: HISTORIAL =====
+        function renderHistorial() {
+            const historial = getHistorial();
+            const container = document.getElementById('historialMeses');
+            const totalMeses = document.getElementById('totalMesesCerrados');
+            
+            totalMeses.textContent = `Total: ${historial.length} meses`;
+            
+            if (historial.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center py-3">No hay meses cerrados aún.</p>';
+            } else {
+                container.innerHTML = historial.map((h, index) => `
+                    <div class="mes-cerrado-item">
+                        <div class="mes-info">
+                            <span class="fw-semibold">📅 ${h.mes}</span>
+                            <span class="text-muted small ms-2">Cerrado el ${h.fechaCierre}</span>
+                            <span class="badge bg-danger ms-2">🔒 Cerrado</span>
+                        </div>
+                        <div class="mes-total d-flex align-items-center gap-2 flex-wrap">
+                            <span class="badge bg-soft-secondary">💰 $${(h.totalUtilidad || 0).toFixed(2)}</span>
+                            <span class="badge bg-soft-info">${h.totalMovimientos || 0} mov.</span>
+                            ${puedeEditar() ? `<span class="badge badge-editar-mes" onclick="activarModoEdicion(${index})" style="cursor:pointer;background:#fef3c7;color:#92400e;"><i class="bi bi-pencil-square"></i> Editar</span>` : ''}
+                            <span class="badge badge-editar bg-soft-primary text-primary" onclick="verMesDetalle(${index})" style="cursor:pointer;"><i class="bi bi-eye"></i></span>
+                            ${isAdmin() ? `<span class="badge badge-eliminar" onclick="eliminarMesCerrado(${index})" style="cursor:pointer;background:#fce4ec;color:#a11f2e;"><i class="bi bi-trash3"></i></span>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const mesData = getMesActual();
+            const saldoInicialDiv = document.getElementById('saldoInicialDisplay');
+            if (mesData && mesData.saldoInicial) {
+                const si = mesData.saldoInicial;
+                saldoInicialDiv.innerHTML = `
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">🏦 Chequera: $${(si.chequera || 0).toFixed(2)}</span>
+                    <span class="badge bg-success bg-opacity-10 text-success px-3 py-2">💳 CUP: $${(si.tarjeta_cup || 0).toFixed(2)}</span>
+                    <span class="badge bg-info bg-opacity-10 text-info px-3 py-2">💵 USD: $${(si.tarjeta_usd || 0).toFixed(2)}</span>
+                    ${puedeEditar() ? `<span class="badge bg-soft-secondary px-3 py-2 badge-editar" onclick="editarSaldoInicial()" style="cursor:pointer;"><i class="bi bi-pencil"></i> Editar</span>` : ''}
+                `;
+            } else {
+                saldoInicialDiv.innerHTML = '<span class="text-muted">No definido</span>';
+            }
+
+            const mesActualDiv = document.getElementById('mesActualDisplay');
+            const res = calcularResumen();
+            const estaCerrado = mesData && mesData.cerrado;
+            const mesStr = mesData && mesData.mesSeleccionado ? mesData.mesSeleccionado : getMesActualStr();
+            mesActualDiv.innerHTML = `
+                <span class="badge bg-soft-secondary px-3 py-2">📅 ${mesStr}</span>
+                <span class="badge ${estaCerrado ? 'bg-danger' : 'bg-success'} px-3 py-2">${estaCerrado ? '🔒 Cerrado' : '✅ Abierto'}</span>
+                <span class="badge bg-soft-success px-3 py-2">💰 Utilidad: $${res.utilidad.toFixed(2)}</span>
+                <span class="badge bg-soft-info px-3 py-2">📊 Movimientos: ${movimientos.length}</span>
+            `;
+        }
+
+        // ===== VER DETALLE DE MES =====
+        function verMesDetalle(index) {
+            const historial = getHistorial();
+            const mes = historial[index];
+            if (!mes) return;
+            
+            alert(`📋 ${mes.mes}\n💰 Utilidad: $${(mes.totalUtilidad || 0).toFixed(2)}\n📊 Movimientos: ${mes.totalMovimientos || 0}\n📅 Cerrado: ${mes.fechaCierre}`);
+        }
+
+        // ===== ACTIVAR MODO EDICIÓN =====
+        function activarModoEdicion(index) {
+            if (!puedeEditar()) {
+                alert('No tienes permisos para editar.');
+                return;
+            }
+            const historial = getHistorial();
+            const mes = historial[index];
+            if (!mes) return;
+            cargarMesCerrado(mes.mes);
+        }
+
+        // ===== ELIMINAR MES CERRADO =====
+        function eliminarMesCerrado(index) {
+            if (!isAdmin()) {
+                alert('Solo el administrador puede eliminar meses.');
+                return;
+            }
+            const historial = getHistorial();
+            const mes = historial[index];
+            if (!mes) return;
+            if (!confirm(`⚠️ ¿Eliminar el mes de ${mes.mes}?\n¡Esta acción no se puede deshacer!`)) return;
+            historial.splice(index, 1);
+            saveHistorial(historial);
+            renderAll();
+        }
+
+        // ===== GUARDAR EDICIÓN =====
+        function guardarEdicionMes() {
+            if (!modoEdicionActivo) return;
+            const historial = getHistorial();
+            const mes = historial[edicionIndex];
+            if (!mes) return;
+            
+            mes.movimientos = JSON.parse(JSON.stringify(movimientos));
+            mes.totalMovimientos = movimientos.length;
+            const res = calcularResumen(movimientos);
+            mes.totalUtilidad = res.utilidad;
+            historial[edicionIndex] = mes;
+            saveHistorial(historial);
+            saveMovimientos(movimientos);
+            
+            const mesData = getMesActual() || {};
+            mesData.cerrado = true;
+            mesData.mesSeleccionado = mes.mes;
+            mesData.saldoInicial = mes.saldoInicial || { chequera: 0, tarjeta_cup: 0, tarjeta_usd: 0 };
+            saveMesActual(mesData);
+            
+            modoEdicionActivo = false;
+            document.getElementById('modoEdicionMes').style.display = 'none';
+            
+            actualizarBarraMes();
+            renderAll();
+            alert(`✅ Cambios guardados en el mes de ${mes.mes}.`);
+        }
+
+        // ===== CANCELAR EDICIÓN =====
+        function cancelarEdicionMes() {
+            if (!modoEdicionActivo) return;
+            if (!confirm('¿Cancelar la edición? Se perderán los cambios.')) return;
+            movimientos = edicionMovimientosOriginal;
+            saveMovimientos(movimientos);
+            const mesData = getMesActual() || {};
+            const mesStr = mesData.mesSeleccionado || getMesActualStr();
+            const mesEnHistorial = buscarMesEnHistorial(mesStr);
+            if (mesEnHistorial) {
+                mesData.cerrado = true;
+                saveMesActual(mesData);
+            }
+            modoEdicionActivo = false;
+            document.getElementById('modoEdicionMes').style.display = 'none';
+            actualizarBarraMes();
+            renderAll();
+            alert('❌ Edición cancelada.');
+        }
+
+        // ===== EDITAR SALDO INICIAL =====
+        function editarSaldoInicial() {
+            if (!puedeEditar()) {
+                alert('No tienes permisos para editar.');
+                return;
+            }
+            const mesData = getMesActual() || {};
+            const si = mesData.saldoInicial || { chequera: 0, tarjeta_cup: 0, tarjeta_usd: 0 };
+            document.getElementById('saldoInicialChequera').value = si.chequera || 0;
+            document.getElementById('saldoInicialCUP').value = si.tarjeta_cup || 0;
+            document.getElementById('saldoInicialUSD').value = si.tarjeta_usd || 0;
+            document.getElementById('modalMesActual').textContent = mesData.mesSeleccionado || getMesActualStr();
+            saldoInicialModal.show();
+        }
+
+        // ===== ALERTA FINANCIERA =====
+        function renderAlertaFinanciera() {
+            const res = calcularResumen();
+            const { ingresos, gastos, onat, utilidad } = res;
+            let porcentaje = 0, estado = 'correcto', mensaje = '', sugerencia = '', icono = '', detalle = '';
+            
+            if (ingresos > 0) {
+                porcentaje = (utilidad / ingresos) * 100;
+                const utilidadDeseada = ingresos * (META_UTILIDAD / 100);
+                const diferenciaPorcentaje = porcentaje - META_UTILIDAD;
+                
+                if (Math.abs(diferenciaPorcentaje) <= TOLERANCIA) {
+                    estado = 'correcto'; icono = '✅'; mensaje = '🎯 ¡TODO CORRECTO! Estás en el margen ideal.';
+                    sugerencia = `Utilidad del ${porcentaje.toFixed(1)}% = $${utilidad.toFixed(2)}`;
+                } else if (porcentaje > META_UTILIDAD + TOLERANCIA) {
+                    estado = 'gastar'; icono = '💡'; mensaje = '💰 ¡Tienes margen para gastar más!';
+                    sugerencia = `Puedes gastar hasta $${(utilidad - utilidadDeseada).toFixed(2)} adicionales.`;
+                } else {
+                    estado = 'ingresar'; icono = '⚠️'; mensaje = '📊 Necesitas ajustar tus finanzas.';
+                    const deficit = utilidadDeseada - utilidad;
+                    sugerencia = `Para alcanzar el ${META_UTILIDAD}%:\n• 🔼 Aumenta ingresos en $${(deficit / 0.85).toFixed(2)}\n• 🔽 Reduce gastos en $${deficit.toFixed(2)}`;
+                }
+                detalle = `Objetivo: ${META_UTILIDAD}% | Actual: ${porcentaje.toFixed(1)}%`;
+            } else {
+                estado = 'aviso'; icono = '📊'; mensaje = 'No hay ingresos registrados.';
+                sugerencia = '💡 Registra tus ingresos para ver el análisis financiero.';
+                porcentaje = 0;
+            }
+
+            const alerta = document.getElementById('alertaFinanciera');
+            alerta.className = `alerta-financiera ${estado}`;
+            alerta.innerHTML = `
+                <div class="icono">${icono}</div>
+                <div class="contenido">
+                    <div class="titulo">${mensaje}</div>
+                    <div class="resumen-cifras">
+                        <span>💰 Ingresos: $${ingresos.toFixed(2)}</span>
+                        <span>📉 Gastos: $${gastos.toFixed(2)}</span>
+                        <span>📄 ONAT: $${onat.toFixed(2)}</span>
+                        <span>📈 Utilidad: $${utilidad.toFixed(2)}</span>
+                    </div>
+                    ${sugerencia ? `<div class="sugerencia">${sugerencia}</div>` : ''}
+                    ${detalle ? `<div class="detalle">📊 ${detalle}</div>` : ''}
+                </div>
+                <div class="porcentaje ${estado}">${porcentaje.toFixed(1)}%</div>
+            `;
+        }
+
+        // ===== RENDER TODO =====
+        function renderAll() {
+            renderTablaGeneral();
+            renderResumenCuentas();
+            renderAlertaFinanciera();
+            ['chequera', 'tarjeta_cup', 'tarjeta_usd'].forEach(c => renderTablaCuenta(c));
+            renderHistorial();
+            
+            const res = calcularResumen();
+            document.getElementById('totalIngresos').textContent = `$${res.ingresos.toFixed(2)}`;
+            document.getElementById('totalGastos').textContent = `$${res.gastos.toFixed(2)}`;
+            document.getElementById('totalOnat').textContent = `$${res.onat.toFixed(2)}`;
+            document.getElementById('totalUtilidad').innerHTML = res.utilidad >= 0 ? 
+                `<span class="utilidad-positive">$${res.utilidad.toFixed(2)}</span>` : 
+                `<span class="utilidad-negative">-$${Math.abs(res.utilidad).toFixed(2)}</span>`;
+            
+            actualizarBarraMes();
+            
+            if (isAdmin()) renderAdminPanel();
+        }
+
+        // ===== AGREGAR MOVIMIENTO =====
+        function iniciarAgregarMovimiento(tipo, cuenta) {
+            if (!puedeEditar()) {
+                alert('No tienes permisos para agregar movimientos.');
+                return;
+            }
+            
+            const mesData = getMesActual();
+            if (mesData && mesData.cerrado && !modoEdicionActivo) {
+                alert('⚠️ El mes está cerrado. Usa el selector para editarlo.');
+                return;
+            }
+            
+            const mesStr = mesData && mesData.mesSeleccionado ? mesData.mesSeleccionado : getMesActualStr();
+            if (mesEstaBloqueado(mesStr) && !isAdmin()) {
+                alert('🚫 Este mes está bloqueado. No puedes agregar movimientos.');
+                return;
+            }
+
+            const esUSD = cuenta === 'tarjeta_usd';
+            const concepto = prompt('Concepto:');
+            if (concepto === null) return;
+            const montoInput = prompt(`Monto (${esUSD ? 'USD' : 'CUP'}):`);
+            if (montoInput === null) return;
+            const monto = parseFloat(montoInput);
+            if (isNaN(monto) || monto <= 0) { alert('Monto inválido'); return; }
+            const fecha = prompt('Fecha (AAAA-MM-DD):', new Date().toISOString().split('T')[0]);
+            if (fecha === null) return;
+            
+            tempMovimiento = { concepto: concepto.trim(), tipo, cuenta, monto, fecha };
+            clasificacionModal.show();
+        }
+
+        function finalizarAgregarMovimiento(clasificacion) {
+            const { concepto, tipo, cuenta, monto, fecha } = tempMovimiento;
+            movimientos.push({ 
+                id: nextId++, 
+                concepto, 
+                tipo, 
+                clasificacion, 
+                cuenta, 
+                monto: parseFloat(monto), 
+                fecha 
+            });
+            saveMovimientos(movimientos);
+            renderAll();
+            tempMovimiento = {};
+            clasificacionModal.hide();
+        }
+
+        // ===== CERRAR MES =====
+        function cerrarMes() {
+            if (!puedeEditar()) {
+                alert('No tienes permisos para cerrar el mes.');
+                return;
+            }
+            
+            if (modoEdicionActivo) {
+                alert('⚠️ Estás en modo edición. Guarda o cancela los cambios primero.');
+                return;
+            }
+
+            const mesData = getMesActual();
+            if (mesData && mesData.cerrado) {
+                alert('⚠️ El mes ya está cerrado.');
+                return;
+            }
+
+            const res = calcularResumen();
+            const mesStr = mesData && mesData.mesSeleccionado ? mesData.mesSeleccionado : getMesActualStr();
+            
+            if (movimientos.length === 0) {
+                if (!confirm(`No hay movimientos. ¿Cerrar ${mesStr}?`)) return;
+            }
+
+            if (!confirm(`¿Cerrar ${mesStr}?\n💰 Utilidad: $${res.utilidad.toFixed(2)}\n📊 Movimientos: ${movimientos.length}`)) return;
+
+            const historial = getHistorial();
+            const mesActualData = getMesActual() || {};
+            historial.push({
+                mes: mesStr,
+                fechaCierre: new Date().toISOString().split('T')[0],
+                totalUtilidad: res.utilidad,
+                totalMovimientos: movimientos.length,
+                saldoInicial: mesActualData.saldoInicial || { chequera: 0, tarjeta_cup: 0, tarjeta_usd: 0 },
+                saldoFinal: {
+                    chequera: res.saldos.chequera.monto,
+                    tarjeta_cup: res.saldos.tarjeta_cup.monto,
+                    tarjeta_usd: res.saldos.tarjeta_usd.monto
+                },
+                movimientos: JSON.parse(JSON.stringify(movimientos))
+            });
+            saveHistorial(historial);
+
+            const siguienteMes = obtenerSiguienteMes(mesStr);
+            const nuevoMesData = {
+                mesSeleccionado: siguienteMes,
+                cerrado: false,
+                saldoInicial: { chequera: 0, tarjeta_cup: 0, tarjeta_usd: 0 },
+                inicioMes: new Date().toISOString().split('T')[0]
+            };
+            saveMesActual(nuevoMesData);
+
+            movimientos = [];
+            nextId = 1;
+            saveMovimientos(movimientos);
+
+            renderAll();
+            
+            document.getElementById('saldoInicialChequera').value = 0;
+            document.getElementById('saldoInicialCUP').value = 0;
+            document.getElementById('saldoInicialUSD').value = 0;
+            document.getElementById('modalMesActual').textContent = siguienteMes;
+            saldoInicialModal.show();
+            
+            alert(`✅ ${mesStr} cerrado. Nuevo mes: ${siguienteMes}`);
+        }
+
+        // ===== GUARDAR SALDO INICIAL =====
+        function guardarSaldoInicial() {
+            const chequera = parseFloat(document.getElementById('saldoInicialChequera').value) || 0;
+            const tarjeta_cup = parseFloat(document.getElementById('saldoInicialCUP').value) || 0;
+            const tarjeta_usd = parseFloat(document.getElementById('saldoInicialUSD').value) || 0;
+
+            const mesData = getMesActual() || {};
+            mesData.saldoInicial = { chequera, tarjeta_cup, tarjeta_usd };
+            if (mesData.cerrado) mesData.cerrado = false;
+            mesData.inicioMes = new Date().toISOString().split('T')[0];
+            saveMesActual(mesData);
+
+            saldoInicialModal.hide();
+            renderAll();
+            alert('✅ Saldo inicial guardado.');
+        }
+
+        // ===== CALCULAR ONAT =====
+        function mostrarModalONAT() {
+            const calc = calcularONATData(movimientos);
+            onatModalBody.innerHTML = `
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><div class="p-2 rounded-3" style="background:#f0f4fe;"><small class="text-muted">Ingresos</small><h6>$${calc.ingresos.toFixed(2)}</h6></div></div>
+                    <div class="col-6"><div class="p-2 rounded-3" style="background:#f0fdf4;"><small class="text-muted">Utilidad</small><h6>$${calc.utilidad.toFixed(2)}</h6></div></div>
+                </div>
+                <div class="onat-item"><span>📊 Importe Ventas (10%)</span><span class="value positive">$${calc.importeVentas.toFixed(2)}</span></div>
+                <div class="onat-item"><span>🏗️ Desarrollo Local (1%)</span><span class="value positive">$${calc.desarrolloLocal.toFixed(2)}</span></div>
+                <div class="onat-item"><span>📈 Aporte Utilidades (35%)</span><span class="value ${calc.aporteUtilidades>0?'positive':'negative'}">$${calc.aporteUtilidades.toFixed(2)}</span></div>
+                <div class="onat-total"><div class="d-flex justify-content-between"><h4>Total ONAT</h4><h4 style="color:#1f3a6b;">$${calc.totalONAT.toFixed(2)}</h4></div></div>
+            `;
+            onatModal.show();
+        }
+
+        function registrarAporteDesdeModal() {
+            if (!puedeEditar()) {
+                alert('No tienes permisos para registrar aportes.');
+                return;
+            }
+            const calc = calcularONATData(movimientos);
+            if (calc.totalONAT <= 0) { alert('ONAT es $0.00'); return; }
+            const cuenta = prompt('Cuenta (chequera, tarjeta_cup, tarjeta_usd):', 'chequera');
+            if (cuenta && ['chequera', 'tarjeta_cup', 'tarjeta_usd'].includes(cuenta)) {
+                movimientos.push({ 
+                    id: nextId++, 
+                    concepto: 'Aporte ONAT', 
+                    tipo: 'onat', 
+                    clasificacion: 'operacional', 
+                    cuenta, 
+                    monto: parseFloat(calc.totalONAT.toFixed(2)), 
+                    fecha: new Date().toISOString().split('T')[0] 
+                });
+                saveMovimientos(movimientos);
+                renderAll();
+                onatModal.hide();
+                alert(`✅ ONAT de $${calc.totalONAT.toFixed(2)} registrado.`);
+            }
+        }
+
+        // ===== CREAR USUARIO (FINALMENTE CORREGIDO) =====
+        function crearUsuario() {
+            // Verificar si es admin
+            if (!isAdmin()) {
+                alert('Solo el administrador puede crear usuarios.');
+                return;
+            }
+            
+            // Obtener valores de los campos
+            const negocio = document.getElementById('newNegocioNombre').value.trim() || 'Mi Negocio';
+            const username = document.getElementById('newUser').value.trim();
+            const password = document.getElementById('newPass').value.trim();
+            const role = document.getElementById('newRole').value;
+            const entityType = document.getElementById('newEntityType').value;
+            const socios = entityType === 'mipyme' ? (parseInt(document.getElementById('newSocios').value) || 1) : 0;
+            
+            // Validaciones
+            if (!username) { 
+                alert('⚠️ El nombre de usuario es requerido.'); 
+                return; 
+            }
+            if (!password) { 
+                alert('⚠️ La contraseña es requerida.'); 
+                return; 
+            }
+            if (username.length < 3) { 
+                alert('⚠️ El usuario debe tener al menos 3 caracteres.'); 
+                return; 
+            }
+            if (password.length < 4) { 
+                alert('⚠️ La contraseña debe tener al menos 4 caracteres.'); 
+                return; 
+            }
+            
+            // Verificar si el usuario ya existe
+            const users = getUsuarios();
+            if (users[username]) { 
+                alert(`⚠️ El usuario "${username}" ya existe.`); 
+                return; 
+            }
+            
+            // Crear el usuario
+            users[username] = { 
+                password: password, 
+                role: role, 
+                entityType: entityType, 
+                socios: socios, 
+                negocio: negocio 
+            };
+            saveUsuarios(users);
+            
+            // Limpiar campos
+            document.getElementById('newNegocioNombre').value = '';
+            document.getElementById('newUser').value = '';
+            document.getElementById('newPass').value = '';
+            document.getElementById('newSocios').value = 1;
+            
+            // Recargar la lista de usuarios
+            renderAdminPanel();
+            alert(`✅ Usuario "${username}" creado correctamente como ${role}.`);
+        }
+
+        // ===== LOGIN =====
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('userInput').value.trim();
+            const password = document.getElementById('passInput').value.trim();
+            const userData = authenticate(username, password);
+            
+            if (userData) {
+                setCurrentUser(username);
+                loginContainer.classList.add('hidden');
+                dashboardContainer.classList.add('visible');
+                
+                movimientos = getMovimientos();
+                nextId = movimientos.length > 0 ? Math.max(...movimientos.map(m => m.id)) + 1 : 1;
+                
+                const esAdmin = userData.role === 'admin';
+                userRoleBadge.textContent = esAdmin ? '👑 Administrador' : (userData.role === 'editor' ? '✏️ Editor' : '👁️ Consultor');
+                userRoleBadge.className = `badge ${esAdmin ? 'badge-admin' : 'badge-soft-info'} ms-2 px-3 py-2`;
+                userTypeBadge.textContent = userData.entityType === 'mipyme' ? `📋 MIPYME (${userData.socios || 1} socios)` : '📋 TCP';
+                negocioNombreDisplay.textContent = userData.negocio || 'Mi Negocio';
+                adminTabNav.style.display = esAdmin ? 'inline-block' : 'none';
+                
+                if (!puedeEditar()) {
+                    document.querySelectorAll('.btn-ingreso-cuenta, .btn-gasto-cuenta, .btn-onat-cuenta').forEach(b => b.style.display = 'none');
+                }
+                
+                const mesData = getMesActual();
+                if (!mesData || !mesData.saldoInicial) {
+                    document.getElementById('saldoInicialChequera').value = 0;
+                    document.getElementById('saldoInicialCUP').value = 0;
+                    document.getElementById('saldoInicialUSD').value = 0;
+                    document.getElementById('modalMesActual').textContent = mesData && mesData.mesSeleccionado ? mesData.mesSeleccionado : getMesActualStr();
+                    saldoInicialModal.show();
+                }
+                
+                renderAll();
+                if (esAdmin) renderAdminPanel();
+            } else {
+                alert('Usuario o contraseña incorrectos.');
+            }
+        }
+
+        // ===== LOGOUT =====
+        function handleLogout() {
+            if (modoEdicionActivo && !confirm('Hay cambios sin guardar. ¿Salir?')) return;
+            setCurrentUser(null);
+            dashboardContainer.classList.remove('visible');
+            loginContainer.classList.remove('hidden');
+            document.getElementById('userInput').value = 'admin';
+            document.getElementById('passInput').value = 'admin123';
+            movimientos = getDefaultMovimientos();
+            nextId = movimientos.length > 0 ? Math.max(...movimientos.map(m => m.id)) + 1 : 1;
+            saveMovimientos(movimientos);
+            if (modoEdicionActivo) {
+                modoEdicionActivo = false;
+                document.getElementById('modoEdicionMes').style.display = 'none';
+            }
+        }
+
+        // ===== EVENT LISTENERS =====
+        loginForm.addEventListener('submit', handleLogin);
+        logoutBtn.addEventListener('click', handleLogout);
+
+        document.getElementById('newEntityType').addEventListener('change', toggleSocios);
+        toggleSocios();
+
+        document.getElementById('btnAplicarMes').addEventListener('click', cambiarMesDesdeSelector);
+        document.getElementById('btnGuardarEdicionMes').addEventListener('click', guardarEdicionMes);
+        document.getElementById('btnCancelarEdicionMes').addEventListener('click', cancelarEdicionMes);
+        document.getElementById('btnCerrarMes').addEventListener('click', cerrarMes);
+        document.getElementById('btnCerrarMesDesdeHistorial').addEventListener('click', cerrarMes);
+        document.getElementById('btnGuardarSaldoInicial').addEventListener('click', guardarSaldoInicial);
+        document.getElementById('btnEditarSaldoInicial').addEventListener('click', editarSaldoInicial);
+        document.getElementById('btnCalcularONAT').addEventListener('click', mostrarModalONAT);
+        document.getElementById('btnAgregarOnatDesdeModal').addEventListener('click', registrarAporteDesdeModal);
+        
+        // ==== BOTÓN CREAR USUARIO - VERSIÓN DEFINITIVA ====
+        // Usamos un enfoque diferente: asignar el evento directamente al botón existente
+        const btnCrear = document.getElementById('btnCrearUsuario');
+        if (btnCrear) {
+            // Remover cualquier evento anterior clonando y reemplazando
+            const nuevoBoton = btnCrear.cloneNode(true);
+            btnCrear.parentNode.replaceChild(nuevoBoton, btnCrear);
+            // Asignar el evento al nuevo botón
+            nuevoBoton.addEventListener('click', crearUsuario);
+            // También guardar referencia para debug
+            console.log('Botón Crear Usuario configurado correctamente.');
+        } else {
+            console.error('No se encontró el botón btnCrearUsuario');
+        }
+
+        document.querySelectorAll('.btn-ingreso-cuenta').forEach(btn => {
+            btn.addEventListener('click', function() { iniciarAgregarMovimiento('ingreso', this.getAttribute('data-cuenta')); });
+        });
+        document.querySelectorAll('.btn-gasto-cuenta').forEach(btn => {
+            btn.addEventListener('click', function() { iniciarAgregarMovimiento('gasto', this.getAttribute('data-cuenta')); });
+        });
+        document.querySelectorAll('.btn-onat-cuenta').forEach(btn => {
+            btn.addEventListener('click', function() { iniciarAgregarMovimiento('onat', this.getAttribute('data-cuenta')); });
+        });
+
+        document.querySelectorAll('.btn-clasificacion').forEach(btn => {
+            btn.addEventListener('click', function() {
+                finalizarAgregarMovimiento(this.getAttribute('data-clasificacion'));
+            });
+        });
+
+        document.querySelector('#saldoInicialModal .btn-secondary').addEventListener('click', function() {
+            saldoInicialModal.hide();
+            const mesData = getMesActual() || {};
+            mesData.saldoInicial = { chequera: 0, tarjeta_cup: 0, tarjeta_usd: 0 };
+            saveMesActual(mesData);
+            renderAll();
+        });
+
+        // ===== INICIALIZAR =====
+        loginContainer.classList.remove('hidden');
+        dashboardContainer.classList.remove('visible');
+        renderAll();
+
+        document.getElementById('selectorAnio').value = new Date().getFullYear();
+
+        window.irAPestana = irAPestana;
+        window.activarModoEdicion = activarModoEdicion;
+        window.eliminarMesCerrado = eliminarMesCerrado;
+        window.toggleBloqueoMes = toggleBloqueoMes;
+        
+        // Exponer la función crearUsuario globalmente por si acaso
+        window.crearUsuario = crearUsuario;
+    })();
+</script>
+</body>
+</html>
