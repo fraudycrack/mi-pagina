@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Privado</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body {
+      background-color: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+    }
+    .card {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 480px;
+    }
+    h2 { margin-top: 0; color: #333; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    button, .btn-link {
+      display: inline-block;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+      text-decoration: none;
+      margin-top: 0.5rem;
+    }
+    button:hover, .btn-link:hover { background-color: #0052a3; }
+    .btn-danger { background-color: #dc3545; }
+    .btn-danger:hover { background-color: #bd2130; }
+    .hidden { display: none !important; }
+    .error {
+      color: #d9534f;
+      background-color: #fdf7f7;
+      border: 1px solid #d9534f;
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .catalog-box {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .catalog-title {
+      font-weight: bold;
+      color: #222;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-card" class="card">
+    <h2>Iniciar Sesión</h2>
+    <div id="error-msg" class="error hidden">Usuario o contraseña incorrectos</div>
+    <form onsubmit="validarAcceso(event)">
+      <div class="form-group">
+        <label for="user">Usuario</label>
+        <input type="text" id="user" required>
+      </div>
+      <div class="form-group">
+        <label for="pass">Contraseña</label>
+        <input type="password" id="pass" required>
+      </div>
+      <button type="submit">Ingresar</button>
+    </form>
+  </div>
+
+  <!-- CATÁLOGO -->
+  <div id="catalog-card" class="card hidden">
+    <h2>Catálogo</h2>
+    
+    <div id="catalog-content">
+      <div class="catalog-box">
+        <p class="catalog-title">
+          The Last of Us: Part II – Remastered v1.6.10721 + DLC + Bonus OST (22 JUL 2025) (84.6GB)
+        </p>
+        <a href="https://t.me/c/2067149388/9684" target="_blank" class="btn-link">Abrir Enlace</a>
+      </div>
+    </div>
+
+    <button onclick="cerrarSesion()" class="btn-danger">Cerrar Sesión</button>
+  </div>
+
+  <script>
+    const accessKeys = {
+      'Fraudy': '8a410313364f3d17d598e3b1c6d9972c448a3c8e42f7415170d10b7b6e9a62bc',
+      '1234': '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'
+    };
+
+    async function hashValue(text) {
+      const msgUint8 = new TextEncoder().encode(text);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function validarAcceso(event) {
+      event.preventDefault();
+      
+      const userIngresado = document.getElementById('user').value.trim();
+      const passIngresada = document.getElementById('pass').value.trim();
+
+      if (accessKeys[userIngresado]) {
+        const passHash = await hashValue(passIngresada);
+        if (accessKeys[userIngresado] === passHash) {
+          document.getElementById('login-card').classList.add('hidden');
+          document.getElementById('catalog-card').classList.remove('hidden');
+          document.getElementById('error-msg').classList.add('hidden');
+          return;
+        }
+      }
+      
+      document.getElementById('error-msg').classList.remove('hidden');
+    }
+
+    function cerrarSesion() {
+      document.getElementById('user').value = '';
+      document.getElementById('pass').value = '';
+      document.getElementById('catalog-card').classList.add('hidden');
+      document.getElementById('login-card').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+</html>
