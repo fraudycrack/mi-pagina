@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Personal Vault</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+      color: #fff;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      color: #ffffff;
+    }
+    p.subtitle {
+      color: #b3c5d7;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+    .btn-main {
+      display: inline-block;
+      width: 100%;
+      padding: 0.85rem;
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      font-weight: 600;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-main:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+    }
+    .hidden { display: none !important; }
+    .catalog-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
+    .catalog-title {
+      font-weight: 600;
+      color: #fff;
+      margin: 0 0 0.8rem 0;
+      font-size: 1.1rem;
+    }
+    audio {
+      width: 100%;
+      margin-top: 1rem;
+      border-radius: 8px;
+    }
+    .btn-back {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ddd;
+      margin-top: 1rem;
+    }
+    .btn-back:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PANTALLA DE BIENVENIDA -->
+  <div id="welcome-card" class="card">
+    <h1>MY PLAYLIST</h1>
+    <p class="subtitle">Press enter to launch the audio player</p>
+    <button class="btn-main" onclick="entrar()">ENTER</button>
+  </div>
+
+  <!-- REPRODUCTOR / CATÁLOGO -->
+  <div id="catalog-card" class="card hidden">
+    <h1>TRACKS</h1>
+    <p class="subtitle">Select a track to play</p>
+    
+    <div id="catalog-content">
+      <!-- Canción 1 -->
+      <div class="catalog-box">
+        <p class="catalog-title">Phil Wickham – The Jesus Way</p>
+        <button class="btn-main" onclick="reproducir('Phil Wickham – The Jesus Way.mp3')">▶️ Play Track</button>
+      </div>
+    </div>
+
+    <!-- Reproductor de Audio -->
+    <audio id="audio-player" controls class="hidden"></audio>
+
+    <button onclick="salir()" class="btn-main btn-back">⬅️ Exit</button>
+  </div>
+
+  <script>
+    function entrar() {
+      document.getElementById('welcome-card').classList.add('hidden');
+      document.getElementById('catalog-card').classList.remove('hidden');
+    }
+
+    function reproducir(archivo) {
+      const player = document.getElementById('audio-player');
+      player.src = archivo;
+      player.classList.remove('hidden');
+      player.play();
+    }
+
+    function salir() {
+      const player = document.getElementById('audio-player');
+      player.pause();
+      player.src = '';
+      player.classList.add('hidden');
+
+      document.getElementById('catalog-card').classList.add('hidden');
+      document.getElementById('welcome-card').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+</html>
